@@ -1,0 +1,20 @@
+body { 
+	background: black; 
+}
+
+.custom-range::-webkit-slider-thumb {
+  background: black;
+}
+
+.custom-range::-moz-range-thumb {
+  background: black;
+}
+
+.custom-range::-ms-thumb {
+  background: black;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
