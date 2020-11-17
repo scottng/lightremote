@@ -2,18 +2,14 @@
 
 require 'config/config.php';
 
-$access_token = get_user_access_token()[0];
-$whitelist_identifier = whitelist($access_token);
-update_user_whitelist_identifier($whitelist_identifier);
+if(isset($_SESSION["access_token"])) $access_token = $_SESSION["access_token"];
+else $access_token = get_user_access_token();
+
+if(isset($_SESSION["whitelist_identifier"])) $whitelist_identifier = $_SESSION["whitelist_identifier"];
+else $whitelist_identifier = whitelist($access_token);
 
 // echo get_room_card_info(get_all_rooms($access_token, $whitelist_identifier));
 echo get_all_rooms($access_token, $whitelist_identifier);
-
-// If access_token is null return false
-// Else return true	
-function did_user_connect_hue() {
-
-}
 
 // Get the user's access_token from database
 // Return access_token
@@ -35,8 +31,12 @@ function get_user_access_token() {
 
 	$mysqli->close();
 
+	$access_token = $results->fetch_row()[0];
+
+	$_SESSION["access_token"] = $access_token;
+
 	// return access token
-	return $results->fetch_row();
+	return $access_token;
 }
 
 // Create a whitelist entry/username remotely
@@ -81,10 +81,17 @@ function whitelist($access_token) {
 
 	$whitelist_identifier = $response_POST[0]->success->username;
 
+	// Update in database
+	update_user_whitelist_identifier($whitelist_identifier);
+
+	$_SESSION["whitelist_identifier"] = $whitelist_identifier;
+
 	return $whitelist_identifier;
 }
 
 // Update user's whitelist identifier in database
+// Called from whitelist()
+// No return value
 function update_user_whitelist_identifier($whitelist_identifier) {
 	$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 	if($mysqli->connect_errno) {
@@ -103,24 +110,24 @@ function update_user_whitelist_identifier($whitelist_identifier) {
 	$mysqli->close();
 }
 
-// Return user's whitelist identifier in database
-function get_user_whitelist_identifier() {
-	$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-	if($mysqli->connect_errno) {
-		echo $mysqli->connect_errno;
-		exit();
-	}
+// // Return user's whitelist identifier in database
+// function get_user_whitelist_identifier() {
+// 	$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+// 	if($mysqli->connect_errno) {
+// 		echo $mysqli->connect_errno;
+// 		exit();
+// 	}
 
-	$sql = "UPDATE users SET whitelist_identifier ='" . $whitelist_identifier . "' WHERE email='" . $_SESSION['email'] . "';" ;
+// 	$sql = "UPDATE users SET whitelist_identifier ='" . $whitelist_identifier . "' WHERE email='" . $_SESSION['email'] . "';" ;
 
-	$results = $mysqli->query($sql);
-	if(!$results) {
-		echo $mysqli->error;
-		exit();
-	}
+// 	$results = $mysqli->query($sql);
+// 	if(!$results) {
+// 		echo $mysqli->error;
+// 		exit();
+// 	}
 
-	$mysqli->close();
-}
+// 	$mysqli->close();
+// }
 
 // Return all lights
 function get_all_lights($access_token, $whitelist_identifier) {
