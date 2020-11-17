@@ -6,6 +6,9 @@ $access_token = get_user_access_token()[0];
 $whitelist_identifier = whitelist($access_token);
 update_user_whitelist_identifier($whitelist_identifier);
 
+// echo get_room_card_info(get_all_rooms($access_token, $whitelist_identifier));
+echo get_all_rooms($access_token, $whitelist_identifier);
+
 // If access_token is null return false
 // Else return true	
 function did_user_connect_hue() {
@@ -119,9 +122,63 @@ function get_user_whitelist_identifier() {
 	$mysqli->close();
 }
 
-// Return 
-function get_rooms() {
-	$url = "https://api.meethue.com/bridge/" . $whitelist_identifier;
+// Return all lights
+function get_all_lights($access_token, $whitelist_identifier) {
+	$url = "https://api.meethue.com/bridge/" . $whitelist_identifier . "/lights";
+
+	$curl = curl_init();
+	curl_setopt_array($curl, array(
+		CURLOPT_URL => $url,
+		CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $access_token, 'Content-Type: application/json')
+	));
+	$response_GET = curl_exec($curl);
+
+	return $response_GET;
+}
+
+// Return all rooms
+function get_all_rooms($access_token, $whitelist_identifier) {
+	$url = "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups";
+
+	$curl = curl_init();
+	curl_setopt_array($curl, array(
+		CURLOPT_URL => $url,
+		CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $access_token, 'Content-Type: application/json')
+	));
+	$response_GET = curl_exec($curl);
+
+	$response_GET = json_decode($response_GET);
+
+	// Filter for only "type": "Room"
+	$rooms = array();
+	foreach ($response_GET as $light_group) {
+		if($light_group->type == "Room") {
+			array_push($rooms, $light_group);
+		}
+	}
+
+	return json_encode($rooms);
+}
+
+function turn_off($access_token, $whitelist_identifier, $id) {
+	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
+
+	$data_PUT = array(
+		"on" => false
+	);
+
+	$curl = curl_init();
+	curl_setopt_array($curl, array(
+		CURLOPT_URL => $url,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_CUSTOMREQUEST => "PUT",
+        CURLOPT_POSTFIELDS => json_encode($data_PUT),
+        CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $access_token, 'Content-Type: application/json')
+	));
+
+	curl_exec($curl);
 }
 
  ?>

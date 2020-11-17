@@ -1,6 +1,17 @@
 <?php 
 require 'config/config.php';
 
+$authorize_url_params = array(
+	"clientid" => $client_id,
+	"appid" => $appid,
+	"deviceid" => $deviceid,
+	"devicename" => $devicename,
+	"state" => $state,
+	"response_type" => "code"
+);
+
+$authorize_url = "https://api.meethue.com/oauth2/auth?" . http_build_query($authorize_url_params);
+
 ?>
 
 <!DOCTYPE html>
@@ -16,46 +27,6 @@ require 'config/config.php';
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<script src="card.js"></script>
-	<script>
-		function ajaxGet(endpointUrl, returnFunction){
-			console.log("ajaxGet()");
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', endpointUrl, true);
-			xhr.onreadystatechange = function(){
-				console.log("state change ajaxGet");
-				if (xhr.readyState == XMLHttpRequest.DONE) {
-					if (xhr.status == 200) {
-						// When ajax call is complete, call this function, pass a string with the response
-						returnFunction( xhr.responseText );
-					} else {
-						alert('AJAX Error.');
-						console.log(xhr.status);
-					}
-				}
-			}
-			xhr.send();
-		};
-
-		function ajaxPost(endpointUrl, postData, returnFunction){
-			console.log("ajaxPost()");
-			var xhr = new XMLHttpRequest();
-			xhr.open('POST', endpointUrl, true);
-			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			xhr.onreadystatechange = function(){
-				console.log("state change ajaxPost");
-				if (xhr.readyState == XMLHttpRequest.DONE) {
-					if (xhr.status == 200) {
-						returnFunction( xhr.responseText );
-					} else {
-						alert('AJAX Error.');
-						console.log(xhr.status);
-					}
-				}
-			}
-			xhr.send(postData);
-		};
-	</script>
 
 	<!-- Navigation -->
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark">
@@ -76,8 +47,6 @@ require 'config/config.php';
 		</div>
 	</nav>
 
-	
-
 	<div class="container">
 
 		<div class="row m-2 p-2">
@@ -86,45 +55,18 @@ require 'config/config.php';
 			</div>
 		</div>
 
-		<!-- Hue OAuth -->
-		<?php 
-			$scope = [];
-
-			$authorize_url_params = array(
-				"clientid" => $client_id,
-				"appid" => $appid,
-				"deviceid" => $deviceid,
-				"devicename" => $devicename,
-				"state" => $state,
-				"response_type" => "code"
-			);
-
-			$authorize_url = "https://api.meethue.com/oauth2/auth?" . http_build_query($authorize_url_params);
-		 ?>
-
+		<!-- Backend setup -->
 		<div class="row m-2 p2">
 			<a class="btn btn-primary" href="<?php echo $authorize_url; ?>" role="button">Connect with Hue</a>
-		</div>
-		<!-- End Hue OAuth -->
-
-		<!-- AJAX -> PHP -->
-		<div class="row m-2 p2">
 			<a class="btn btn-primary" id="btn-get-rooms">Get rooms</a>
 		</div>
+		<!-- Backend setup -->
 
-		<script>
-			var btn_get_rooms = document.querySelector("#btn-get-rooms");
+	</div>
 
-			btn_get_rooms.addEventListener("click", ajaxGet("api.php", function(results){
-				console.log("btn_get_rooms pressed");
-				console.log(results);
-			}));
-		</script>
+	<div class="container" id="card-container">
 
-		<!-- AJAX -> PHP -->
-
-
-		<div class="row m-2 p-2">
+<!-- 		<div class="row m-2 p-2">
 			<div class="col-lg-4 col-md-4 col-sm-12 col-12">
 				<div class="card" style="background:#fff6db;">
 					<div class="card-body">
@@ -209,10 +151,13 @@ require 'config/config.php';
 					</div>
 				</div>
 			</div>
-
 			
-		</div>
+		</div> -->
 	</div>
+
+	<script src="cie_hex_converter.js"></script>
+	<script src="rooms-ajax.js"></script>
+	<script src="card.js"></script>
 
 </body>
 
