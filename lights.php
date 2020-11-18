@@ -1,3 +1,8 @@
+<?php
+	$room_id = $_GET["room-id"]; 
+	$room_name = $_GET["room-name"];
+ ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,6 +12,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -35,114 +42,21 @@
 
 	
 
-	<div class="container">
+	<div class="container" id="card-container">
 
 		<div class="row m-2 p-2">
 			<div class="text-white">
 				<a href="rooms.php" class="btn btn-primary">Back</a>
-				<h1>Lights</h1>
+				<h1><?php echo $room_name ?></h1>
 			</div>
 		</div>
 
-		<div class="row m-2 p-2">
-			<div class="col-lg-4 col-md-4 col-sm-12 col-12">
-				<div class="card" style="background:#fff6db;">
-					<div class="card-body">
-						<h5 class="card-title">Hue color lamp 1</h5>
-						<input type="color" value="#fff6db" class="colorPicker">
-						<a href="#" class="btn btn-light float-right">ON</a>
-					</div>
-					<div class="card-footer">
-						<div class="justify-content-center">
-							<input type="range" class="custom-range" id="brightness" min="0" max="100" value="100">
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-lg-4 col-md-4 col-sm-12 col-12">
-				<div class="card" style="background:#222222;">
-					<div class="card-body text-white">
-						<h5 class="card-title">Hue color lamp 2</h5>
-						<input type="color" value="#222222" class="colorPicker">
-						<a href="#" class="btn btn-dark float-right">OFF</a>
-					</div>
-					<div class="card-footer">
-						<div class="justify-content-center">
-							<input type="range" class="custom-range" id="brightness" min="0" max="100" value="0">
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-lg-4 col-md-4 col-sm-12 col-12">
-				<div class="card" style="background:#222222;">
-					<div class="card-body text-white">
-						<h5 class="card-title">Hue color lamp 3</h5>
-						<input type="color" value="#222222" class="colorPicker">
-						<a href="#" class="btn btn-dark float-right">OFF</a>
-					</div>
-					<div class="card-footer">
-						<div class="justify-content-center">
-							<input type="range" class="custom-range" id="brightness" min="0" max="100" value="0">
-						</div>
-					</div>
-				</div>
-			</div>
-
-			
 		</div>
 
-		<div class="row m-2 p-2">
-
-			<div class="col-lg-4 col-md-4 col-sm-12 col-12">
-				<div class="card" style="background:#222222;">
-					<div class="card-body text-white">
-						<h5 class="card-title">Hue color lamp 4</h5>
-						<input type="color" value="#222222" class="colorPicker">
-						<a href="#" class="btn btn-dark float-right">OFF</a>
-					</div>
-					<div class="card-footer">
-						<div class="justify-content-center">
-							<input type="range" class="custom-range" id="brightness" min="0" max="100" value="0">
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-lg-4 col-md-4 col-sm-12 col-12">
-				<div class="card" style="background:#222222;">
-					<div class="card-body text-white">
-						<h5 class="card-title">Hue color lamp 5</h5>
-						<input type="color" value="#222222" class="colorPicker">
-						<a href="#" class="btn btn-dark float-right">OFF</a>
-					</div>
-					<div class="card-footer">
-						<div class="justify-content-center">
-							<input type="range" class="custom-range" id="brightness" min="0" max="100" value="0">
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-lg-4 col-md-4 col-sm-12 col-12">
-				<div class="card" style="background:#222222;">
-					<div class="card-body text-white">
-						<h5 class="card-title">Hue color lamp 6</h5>
-						<input type="color" value="#222222" class="colorPicker">
-						<a href="#" class="btn btn-dark float-right">OFF</a>
-					</div>
-					<div class="card-footer">
-						<div class="justify-content-center">
-							<input type="range" class="custom-range" id="brightness" min="0" max="100" value="0">
-						</div>
-					</div>
-				</div>
-			</div>
-
-			
-		</div>
 	</div>
+
+	<script src="cie_hex_converter.js"></script>
+	<script src="lights-ajax.js"></script>
 
 </body>
 

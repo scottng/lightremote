@@ -33,7 +33,10 @@ if(isset($_POST["function"])) {
 }
 
 // Get status of rooms
-echo get_all($access_token, $whitelist_identifier, "room");
+if(isset($_GET["type"])) {
+	if($_GET["type"] == "room") echo get_all($access_token, $whitelist_identifier, "room");
+	else echo get_all($access_token, $whitelist_identifier, "light");
+}
 
 // Get the user's access_token from database
 // Return access_token
@@ -164,7 +167,15 @@ function get_all($access_token, $whitelist_identifier, $type) {
 }
 
 function toggle($access_token, $whitelist_identifier, $id, $type, $on) {
-	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
+	echo "toggle ";
+	echo $id;
+
+	$url = "";
+	if($type == "room") {
+		$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
+	} else {
+		$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/lights/" . $id . "/state";
+	}
 
 	if($on == "true") $on = true;
 	else $on = false;
@@ -188,7 +199,12 @@ function toggle($access_token, $whitelist_identifier, $id, $type, $on) {
 }
 
 function change_color($access_token, $whitelist_identifier, $id, $type, $xy) {
-	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
+	$url = "";
+	if($type == "room") {
+		$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
+	} else {
+		$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/lights/" . $id . "/state";
+	}
 
 	$explode = explode(",", $xy);
 
@@ -211,9 +227,12 @@ function change_color($access_token, $whitelist_identifier, $id, $type, $xy) {
 }
 
 function set_brightness($access_token, $whitelist_identifier, $id, $type, $brightness) {
-	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
-
-	echo "set room brightness";
+	$url = "";
+	if($type == "room") {
+		$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
+	} else {
+		$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/lights/" . $id . "/state";
+	}
 
 	$data_PUT = array(
 		"bri" => intval($brightness)

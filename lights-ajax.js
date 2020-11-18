@@ -1,15 +1,15 @@
-getData = `type=room`;
+getData = `type=light`;
 $.ajax({
 	type: "GET",
 	url: "api.php",
 	data: getData,
 	success: function(data) {
-		get_rooms_success(data);
+		get_lights_success(data);
 	}
 });
 
 function offButtonClickListener(){
-	const type = "room";
+	const type = "light";
 
 	// Update listener
 	this.removeEventListener("click", offButtonClickListener);
@@ -19,10 +19,6 @@ function offButtonClickListener(){
 	this.classList.remove("btn-dark");
 	this.classList.add("btn-light");
 	this.innerHTML = "ON";
-
-	// Change message
-	message = this.parentNode.querySelector(".message");
-	message.innerHTML = "All lights are on.";
 
 	// Change background color to picker color 
 	card = this.parentNode.parentNode;
@@ -51,7 +47,7 @@ function offButtonClickListener(){
 }
 
 function onButtonClickListener() {
-	const type = "room";
+	const type = "light";
 
 	// Update listener
 	this.removeEventListener("click", onButtonClickListener);
@@ -61,10 +57,6 @@ function onButtonClickListener() {
 	this.classList.remove("btn-light");
 	this.classList.add("btn-dark");
 	this.innerHTML = "OFF";
-
-	// Change message
-	message = this.parentNode.querySelector(".message");
-	message.innerHTML = "All lights are off.";
 
 	// Set background to dark
 	card = this.parentNode.parentNode;
@@ -92,7 +84,7 @@ function onButtonClickListener() {
 }
 
 function colorPickerListener() {
-	const type = "room";
+	const type = "light";
 
 	// Front end changes
 	card = this.parentNode.parentNode;
@@ -116,7 +108,7 @@ function colorPickerListener() {
 }
 
 function sliderChangeListener() {
-	const type = "room";
+	const type = "light";
 	// AJAX call
 
 	// Get slider value (brightness)
@@ -160,11 +152,12 @@ function initCardJS() {
 	});
 }
 
-function get_rooms_success(results) {
+function get_lights_success(results) {
 
-	console.log(results);
+	// console.log(results);
 
-	rooms = JSON.parse(results);
+	lights = JSON.parse(results);
+	console.log(lights.length);
 
 	// console.log("rooms");
 	// console.log(rooms);
@@ -181,45 +174,42 @@ function get_rooms_success(results) {
 
 	// make cards based on the results
 	newInnerHTML += `<div class="row m-2 p-2">`;
-	for(i=0; i < rooms.length; i++) {
+	Object.keys(lights).forEach(function(key) {
+
 		// From JSON response
-		let id = i+1;
-		let room_name = rooms[i].name;
-		let lights = rooms[i].lights.length;
-		let state_all_on = rooms[i].state.all_on;
-		let state_any_on = rooms[i].state.any_on;
-		let xy = rooms[i].action.xy;
-		let bri = rooms[i].action.bri;
+		let id = key;
+		let light_name = lights[key].name;
+		// let lights = rooms[i].lights.length;
+		// let state_all_on = lights[i].state.all_on;
+		// let state_any_on = rooms[i].state.any_on;
+		let on = lights[key].state.on;
+
+		let xy = lights[key].state.xy;
+		let bri = lights[key].state.bri;
 
 		// Prepare data to put in card
-		let message = "";
 		let button = "";
 		let background_color = 0;
 		let text_white = "";
 		let brightness = 0;
 		let hex = cie_to_hex(xy[0], xy[1]);
 
-		if(state_any_on == true) {
+		if(on == true) {
 			button = `<a href="#" class="btn btn-light float-right">ON</a>`;
 			background_color = cie_to_hex(xy[0], xy[1]);
 			brightness = bri;
-
-			if(state_all_on) message = "All lights are on.";
-			else message = "Some lights are on.";
 		} else {
 			button = `<a href="#" class="btn btn-dark float-right">OFF</a>`;
 			background_color = 222222;
 			text_white = "text-white";
 			brightness = 0;
-			message = "All lights are off.";
 		}
 
 		let cardHTML = `
 			<div class="col-lg-4 col-md-4 col-sm-12 col-12">
 				<div class="card" style="background:#${background_color};" data-id=${id}>
 					<div class="card-body ${text_white}">
-						<a href="lights.php?&room-id=${id}&room-name=${room_name}"><h5 class="card-title">${room_name}</h5></a>
-						<p class="card-text message">${message}</p>
+						<h5 class="card-title">${light_name}</h5>
 						<input type="color" value="#${cie_to_hex(xy[0], xy[1])}" class="colorPicker">
 						${button}
 					</div>
@@ -232,7 +222,7 @@ function get_rooms_success(results) {
 			</div>
 		`;
 		newInnerHTML += cardHTML;
-	}
+	});
 	newInnerHTML += "</div>";
 
 	cardContainer = document.querySelector("#card-container");
