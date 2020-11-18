@@ -29,9 +29,9 @@ function offButtonClickListener(){
 	cardBody = this.parentNode;
 	cardBody.classList.remove("text-white");
 
-	// Put brightness slider to 100
+	// Put brightness slider to max
 	brightnessSlider = this.parentNode.parentNode.querySelector(".custom-range");
-	brightnessSlider.value = 100;
+	brightnessSlider.value = 254;
 
 	// AJAX call
 	let id = this.parentNode.parentNode.dataset.id;
@@ -159,31 +159,24 @@ function get_lights_success(results) {
 	lights = JSON.parse(results);
 	console.log(lights.length);
 
-	// console.log("rooms");
-	// console.log(rooms);
-	// console.log("rooms[0]");
-	// console.log(rooms[0]);
-	// console.log("rooms[0].name");
-	// console.log(rooms[0].name);
-	// console.log("rooms[0].lights.length");
-	// console.log(rooms[0].lights.length);
-
-	// console.log(rooms);
-
 	newInnerHTML = "";
 
-	// make cards based on the results
-	newInnerHTML += `<div class="row m-2 p-2">`;
+	let numAdded = 0;
+	let start = true;
+
+	// Make cards based on the results
 	Object.keys(lights).forEach(function(key) {
+		// Begin row
+		if(numAdded % 3 == 0 && start) {
+			newInnerHTML += `<div class="row m-2 p-2">`;
+			start = false;
+		}
+		numAdded += 1;
 
 		// From JSON response
 		let id = key;
 		let light_name = lights[key].name;
-		// let lights = rooms[i].lights.length;
-		// let state_all_on = lights[i].state.all_on;
-		// let state_any_on = rooms[i].state.any_on;
 		let on = lights[key].state.on;
-
 		let xy = lights[key].state.xy;
 		let bri = lights[key].state.bri;
 
@@ -222,8 +215,13 @@ function get_lights_success(results) {
 			</div>
 		`;
 		newInnerHTML += cardHTML;
+
+		// End row
+		if(numAdded % 3 == 0 && !start) {
+			newInnerHTML += "</div>";
+			start = true;
+		}
 	});
-	newInnerHTML += "</div>";
 
 	cardContainer = document.querySelector("#card-container");
 	cardContainer.innerHTML += newInnerHTML;

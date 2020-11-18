@@ -33,9 +33,9 @@ function offButtonClickListener(){
 	cardBody = this.parentNode;
 	cardBody.classList.remove("text-white");
 
-	// Put brightness slider to 100
+	// Put brightness slider to max
 	brightnessSlider = this.parentNode.parentNode.querySelector(".custom-range");
-	brightnessSlider.value = 100;
+	brightnessSlider.value = 254;
 
 	// AJAX call
 	let id = this.parentNode.parentNode.dataset.id;

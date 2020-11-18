@@ -46,7 +46,7 @@
 
 		<div class="row m-2 p-2">
 			<div class="text-white">
-				<a href="rooms.php" class="btn btn-primary">Back</a>
+				<a href="rooms.php" class="btn btn-secondary">Back</a>
 				<h1><?php echo $room_name ?></h1>
 			</div>
 		</div>
