@@ -37,6 +37,13 @@ function offButtonClickListener(){
 
 	cardBody = this.parentNode;
 	cardBody.classList.remove("text-white");
+
+	// AJAX call
+	$id = this.parentNode.parentNode.dataset.id;
+	$postData = "function=toggle&id=${id}&on=true"
+	ajaxPost("api.php", $postData, function(results) {
+		console.log(results);
+	});
 }
 
 function onButtonClickListener() {
@@ -55,4 +62,18 @@ function onButtonClickListener() {
 	
 	cardBody = this.parentNode;
 	cardBody.classList.add("text-white");
+
+	// AJAX call
+	$id = this.parentNode.parentNode.dataset.id;
+	$postData = "function=toggle&id=${id}&on=false"
+	ajaxPost("api.php", $postData, function(results) {
+		console.log(results);
+	});
+}
+
+function colorPickerListener() {
+	this.addEventListener("change", function(event) {
+		card = this.parentNode.parentNode;
+		card.style.backgroundColor = event.target.value;
+	});
 }

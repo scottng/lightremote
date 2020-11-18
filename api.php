@@ -2,11 +2,22 @@
 
 require 'config/config.php';
 
+// Check if access_token is set
 if(isset($_SESSION["access_token"])) $access_token = $_SESSION["access_token"];
 else $access_token = get_user_access_token();
 
+// Check if whitelist_identifier is set 
 if(isset($_SESSION["whitelist_identifier"])) $whitelist_identifier = $_SESSION["whitelist_identifier"];
 else $whitelist_identifier = whitelist($access_token);
+
+// Check for command
+if(isset($_POST["function"])) {
+	if($_POST["function"] == "toggle") {
+		$id = $_POST["id"];
+		$on = $_POST["on"];
+		toggle($access_token, $whitelist_identifier, $id, $on);
+	}
+}
 
 // echo get_room_card_info(get_all_rooms($access_token, $whitelist_identifier));
 echo get_all_rooms($access_token, $whitelist_identifier);
@@ -169,11 +180,14 @@ function get_all_rooms($access_token, $whitelist_identifier) {
 	return json_encode($rooms);
 }
 
-function turn_off($access_token, $whitelist_identifier, $id) {
+function toggle($access_token, $whitelist_identifier, $id, $on) {
 	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
 
+	if($on == "true") $on = true;
+	else $on = false;
+
 	$data_PUT = array(
-		"on" => false
+		"on" => $on
 	);
 
 	$curl = curl_init();
@@ -185,7 +199,9 @@ function turn_off($access_token, $whitelist_identifier, $id) {
         CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $access_token, 'Content-Type: application/json')
 	));
 
-	curl_exec($curl);
+	$response = curl_exec($curl);
+
+	return $response;
 }
 
  ?>
