@@ -211,6 +211,8 @@ function room_toggle($access_token, $whitelist_identifier, $id, $on) {
 function room_change_color($access_token, $whitelist_identifier, $id, $xy) {
 	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
 
+	$explode = explode(",", $xy);
+
 	$data_PUT = array(
 		"xy" => array(floatval($explode[0]), floatval($explode[1]))
 	);
