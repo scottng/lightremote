@@ -12,22 +12,28 @@ else $whitelist_identifier = whitelist($access_token);
 
 // Check for command
 if(isset($_POST["function"])) {
+	$id = $_POST["id"];
+	$type = $_POST["type"];
+
+	// echo "ID";
+	// echo $id;
+	// echo "TYPE";
+	// echo $type;
+
 	if($_POST["function"] == "toggle") {
-		$id = $_POST["id"];
 		$on = $_POST["on"];
-		toggle($access_token, $whitelist_identifier, $id, $on);
+		toggle($access_token, $whitelist_identifier, $id, $type, $on);
 	} else if($_POST["function"] == "change_color") {
-		$id = $_POST["id"];
 		$xy = $_POST["xy"];
-		change_color($access_token, $whitelist_identifier, $id, $xy);
+		change_color($access_token, $whitelist_identifier, $id, $type, $xy);
 	} else if($_POST["function"] == "set_brightness") {
-		$id = $_POST["id"];
 		$brightness = $_POST["brightness"];
-		set_brightness($access_token, $whitelist_identifier, $id, $brightness);
+		set_brightness($access_token, $whitelist_identifier, $id, $type, $brightness);
 	}
 }
 
-echo get_all_rooms($access_token, $whitelist_identifier);
+// Get status of rooms
+echo get_all($access_token, $whitelist_identifier, "room");
 
 // Get the user's access_token from database
 // Return access_token
@@ -53,7 +59,6 @@ function get_user_access_token() {
 
 	$_SESSION["access_token"] = $access_token;
 
-	// return access token
 	return $access_token;
 }
 
@@ -75,8 +80,6 @@ function whitelist($access_token) {
           CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $access_token, 'Content-Type: application/json')
       ));
 	$response_PUT = curl_exec($curl_PUT);
-	// echo "RESPONSE PUT: ";
-	// echo json_encode($response_PUT);
 
 	// Second step: POST to bridge
 	$url_POST = "https://api.meethue.com/bridge/";
@@ -92,8 +95,6 @@ function whitelist($access_token) {
          CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $access_token, 'Content-Type: application/json')
 	));
 	$response_POST = curl_exec($curl_POST);
-	// echo "RESPONSE POST:";
-	// echo json_encode($response_POST);
 
 	$response_POST = json_decode($response_POST);
 
@@ -128,66 +129,41 @@ function update_user_whitelist_identifier($whitelist_identifier) {
 	$mysqli->close();
 }
 
-// // Return user's whitelist identifier in database
-// function get_user_whitelist_identifier() {
-// 	$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-// 	if($mysqli->connect_errno) {
-// 		echo $mysqli->connect_errno;
-// 		exit();
-// 	}
-
-// 	$sql = "UPDATE users SET whitelist_identifier ='" . $whitelist_identifier . "' WHERE email='" . $_SESSION['email'] . "';" ;
-
-// 	$results = $mysqli->query($sql);
-// 	if(!$results) {
-// 		echo $mysqli->error;
-// 		exit();
-// 	}
-
-// 	$mysqli->close();
-// }
-
 // Return all lights
-function get_all_lights($access_token, $whitelist_identifier) {
-	$url = "https://api.meethue.com/bridge/" . $whitelist_identifier . "/lights";
-
-	$curl = curl_init();
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => $url,
-		CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $access_token, 'Content-Type: application/json')
-	));
-	$response_GET = curl_exec($curl);
-
-	return $response_GET;
-}
-
-// Return all rooms
-function get_all_rooms($access_token, $whitelist_identifier) {
-	$url = "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups";
-
-	$curl = curl_init();
-	curl_setopt_array($curl, array(
-		CURLOPT_URL => $url,
-		CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $access_token, 'Content-Type: application/json')
-	));
-	$response_GET = curl_exec($curl);
-
-	$response_GET = json_decode($response_GET);
-
-	// Filter for only "type": "Room"
-	$rooms = array();
-	foreach ($response_GET as $light_group) {
-		if($light_group->type == "Room") {
-			array_push($rooms, $light_group);
-		}
+function get_all($access_token, $whitelist_identifier, $type) {
+	$url = "";
+	if($type == "light") {
+		$url = "https://api.meethue.com/bridge/" . $whitelist_identifier . "/lights";
+	} else {
+		$url = "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups";
 	}
 
-	return json_encode($rooms);
+	$curl = curl_init();
+	curl_setopt_array($curl, array(
+		CURLOPT_URL => $url,
+		CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $access_token, 'Content-Type: application/json')
+	));
+	$response_GET = curl_exec($curl);
+
+	if($type == "light") {
+		return $response_GET;
+	} else {
+		$response_GET = json_decode($response_GET);
+
+		// Filter for only "type": "Room"
+		$rooms = array();
+		foreach ($response_GET as $light_group) {
+			if($light_group->type == "Room") {
+				array_push($rooms, $light_group);
+			}
+		}
+
+		return json_encode($rooms);
+	}
 }
 
-function toggle($access_token, $whitelist_identifier, $id, $on) {
+function toggle($access_token, $whitelist_identifier, $id, $type, $on) {
 	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
 
 	if($on == "true") $on = true;
@@ -211,7 +187,7 @@ function toggle($access_token, $whitelist_identifier, $id, $on) {
 	return $response;
 }
 
-function change_color($access_token, $whitelist_identifier, $id, $xy) {
+function change_color($access_token, $whitelist_identifier, $id, $type, $xy) {
 	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
 
 	$explode = explode(",", $xy);
@@ -234,7 +210,7 @@ function change_color($access_token, $whitelist_identifier, $id, $xy) {
 	return $response;
 }
 
-function set_brightness($access_token, $whitelist_identifier, $id, $brightness) {
+function set_brightness($access_token, $whitelist_identifier, $id, $type, $brightness) {
 	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
 
 	echo "set room brightness";

@@ -144,7 +144,6 @@
 		</div>
 	</div>
 
-	<script src="card.js"></script>
 </body>
 
 

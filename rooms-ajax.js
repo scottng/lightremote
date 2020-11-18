@@ -1,37 +1,3 @@
-// function ajaxGet(endpointUrl, returnFunction){
-// 	var xhr = new XMLHttpRequest();
-// 	xhr.open('GET', endpointUrl, true);
-// 	xhr.onreadystatechange = function(){
-// 		if (xhr.readyState == XMLHttpRequest.DONE) {
-// 			if (xhr.status == 200) {
-// 				// When ajax call is complete, call this function, pass a string with the response
-// 				returnFunction( xhr.responseText );
-// 			} else {
-// 				alert('AJAX Error.');
-// 				console.log(xhr.status);
-// 			}
-// 		}
-// 	}
-// 	xhr.send();
-// };
-
-function ajaxPost(endpointUrl, postData, returnFunction){
-	var xhr = new XMLHttpRequest();
-	xhr.open('POST', endpointUrl, true);
-	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	xhr.onreadystatechange = function(){
-		if (xhr.readyState == XMLHttpRequest.DONE) {
-			if (xhr.status == 200) {
-				returnFunction( xhr.responseText );
-			} else {
-				alert('AJAX Error.');
-				console.log(xhr.status);
-			}
-		}
-	}
-	xhr.send(postData);
-};
-
 $.ajax({
 	type: "GET",
 	url: "api.php",
@@ -41,6 +7,8 @@ $.ajax({
 });
 
 function offButtonClickListener(){
+	const type = "room";
+
 	// Update listener
 	this.removeEventListener("click", offButtonClickListener);
 	this.addEventListener("click", onButtonClickListener);
@@ -69,7 +37,7 @@ function offButtonClickListener(){
 
 	// AJAX call
 	let id = this.parentNode.parentNode.dataset.id;
-	let postData = `function=toggle&id=${id}&on=true`;
+	let postData = `function=toggle&id=${id}&type="room"&on=true`;
 	$.ajax({
 		type: "POST",
 		url: "api.php",
@@ -81,6 +49,8 @@ function offButtonClickListener(){
 }
 
 function onButtonClickListener() {
+	const type = "room";
+
 	// Update listener
 	this.removeEventListener("click", onButtonClickListener);
 	this.addEventListener("click", offButtonClickListener);
@@ -108,7 +78,7 @@ function onButtonClickListener() {
 
 	// AJAX call
 	let id = this.parentNode.parentNode.dataset.id;
-	let postData = `function=toggle&id=${id}&on=false`;
+	let postData = `function=toggle&id=${id}&type=${type}&on=false`;
 	$.ajax({
 		type: "POST",
 		url: "api.php",
@@ -117,10 +87,11 @@ function onButtonClickListener() {
 			console.log(data);	
 		}
 	});
-
 }
 
 function colorPickerListener() {
+	const type = "room";
+
 	// Front end changes
 	card = this.parentNode.parentNode;
 	card.style.backgroundColor = event.target.value;
@@ -130,10 +101,8 @@ function colorPickerListener() {
 	hex = hex.substring(1);
 	let xy = hex_to_cie(hex);
 	let id = this.parentNode.parentNode.dataset.id;
-	let postData = `function=change_color&id=${id}&xy=${xy}`;
-	// ajaxPost("api.php", postData, function(results) {
-	// 	// console.log(results);
-	// });
+	let postData = `function=change_color&id=${id}&type=${type}&xy=${xy}`;
+
 	$.ajax({
 		type: "POST",
 		url: "api.php",
@@ -145,16 +114,14 @@ function colorPickerListener() {
 }
 
 function sliderChangeListener() {
+	const type = "room";
 	// AJAX call
 
 	// Get slider value (brightness)
 	brightness = this.value;
 
 	let id = this.parentNode.parentNode.parentNode.dataset.id;
-	let postData = `function=set_brightness&id=${id}&brightness=${brightness}`;
-	// ajaxPost("api.php", postData, function(results) {
-	// 	console.log(results);
-	// })
+	let postData = `function=set_brightness&id=${id}&type=${type}&brightness=${brightness}`;
 
 	$.ajax({
 		type: "POST",
@@ -191,10 +158,9 @@ function initCardJS() {
 	});
 }
 
-// btn_get_rooms.addEventListener("click", ajaxGet("api.php", function(results){
 function get_rooms_success(results) {
 
-	// console.log(results);
+	console.log(results);
 
 	rooms = JSON.parse(results);
 
@@ -208,7 +174,6 @@ function get_rooms_success(results) {
 	// console.log(rooms[0].lights.length);
 
 	// console.log(rooms);
-
 
 	newInnerHTML = "";
 
@@ -272,5 +237,4 @@ function get_rooms_success(results) {
 	cardContainer.innerHTML += newInnerHTML;
 
 	initCardJS();
-// }));
 }
