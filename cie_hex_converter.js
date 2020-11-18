@@ -80,6 +80,9 @@ function hex_to_cie(hex) {
 
 function numToHex(num) {
 	var hex = num.toString(16);
+
+	hex = hex.replace("-", "0");
+
 	if(hex.length == 1) return "0" + hex;
 	else return hex;
 }

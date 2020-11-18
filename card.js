@@ -1,11 +1,8 @@
 function initCardJS() {
-	// Change card background color when color changed
+	// Set color picker listeners
 	colorPickers = document.querySelectorAll(".colorPicker");
 	colorPickers.forEach(function(colorPicker){
-		colorPicker.addEventListener("change", function(event) {
-			card = this.parentNode.parentNode;
-			card.style.backgroundColor = event.target.value;
-		});
+		colorPicker.addEventListener("change", colorPickerListener);
 	});
 
 	// Set on/off button listeners
@@ -39,9 +36,9 @@ function offButtonClickListener(){
 	cardBody.classList.remove("text-white");
 
 	// AJAX call
-	$id = this.parentNode.parentNode.dataset.id;
-	$postData = "function=toggle&id=${id}&on=true"
-	ajaxPost("api.php", $postData, function(results) {
+	let id = this.parentNode.parentNode.dataset.id;
+	let postData = `function=room_toggle&id=${id}&on=true`;
+	ajaxPost("api.php", postData, function(results) {
 		console.log(results);
 	});
 }
@@ -64,16 +61,27 @@ function onButtonClickListener() {
 	cardBody.classList.add("text-white");
 
 	// AJAX call
-	$id = this.parentNode.parentNode.dataset.id;
-	$postData = "function=toggle&id=${id}&on=false"
-	ajaxPost("api.php", $postData, function(results) {
+	let id = this.parentNode.parentNode.dataset.id;
+	let postData = `function=room_toggle&id=${id}&on=false`;
+	ajaxPost("api.php", postData, function(results) {
 		console.log(results);
 	});
 }
 
 function colorPickerListener() {
-	this.addEventListener("change", function(event) {
-		card = this.parentNode.parentNode;
-		card.style.backgroundColor = event.target.value;
+	// Front end changes
+	card = this.parentNode.parentNode;
+	card.style.backgroundColor = event.target.value;
+
+	// AJAX call
+	let hex = event.target.value;
+	hex = hex.substring(1);
+	let xy = hex_to_cie(hex);
+	console.log("XY: ");
+	console.log(xy);
+	let id = this.parentNode.parentNode.dataset.id;
+	let postData = `function=room_change_color&id=${id}&xy=${xy}`;
+	ajaxPost("api.php", postData, function(results) {
+		console.log(results);
 	});
 }

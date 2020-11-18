@@ -60,7 +60,7 @@ btn_get_rooms.addEventListener("click", ajaxGet("api.php", function(results){
 	newInnerHTML += `<div class="row m-2 p-2">`;
 	for(i=0; i < rooms.length; i++) {
 		// From JSON response
-		let id = i;
+		let id = i+1;
 		let name = rooms[i].name;
 		let lights = rooms[i].lights.length;
 		let state_all_on = rooms[i].state.all_on;
@@ -74,6 +74,11 @@ btn_get_rooms.addEventListener("click", ajaxGet("api.php", function(results){
 		let background_color = 0;
 		let text_white = "";
 		let brightness = 0;
+
+		let hex = cie_to_hex(xy[0], xy[1]);
+		console.log("HEX: ");
+		console.log(hex);
+
 		if(state_any_on == true) {
 			button = `<a href="#" class="btn btn-light float-right">ON</a>`;
 			background_color = cie_to_hex(xy[0], xy[1]);

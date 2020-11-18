@@ -12,10 +12,14 @@ else $whitelist_identifier = whitelist($access_token);
 
 // Check for command
 if(isset($_POST["function"])) {
-	if($_POST["function"] == "toggle") {
+	if($_POST["function"] == "room_toggle") {
 		$id = $_POST["id"];
 		$on = $_POST["on"];
-		toggle($access_token, $whitelist_identifier, $id, $on);
+		room_toggle($access_token, $whitelist_identifier, $id, $on);
+	} else if($_POST["function"] == "room_change_color") {
+		$id = $_POST["id"];
+		$xy = $_POST["xy"];
+		room_change_color($access_token, $whitelist_identifier, $id, $xy);
 	}
 }
 
@@ -180,7 +184,7 @@ function get_all_rooms($access_token, $whitelist_identifier) {
 	return json_encode($rooms);
 }
 
-function toggle($access_token, $whitelist_identifier, $id, $on) {
+function room_toggle($access_token, $whitelist_identifier, $id, $on) {
 	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
 
 	if($on == "true") $on = true;
@@ -188,6 +192,27 @@ function toggle($access_token, $whitelist_identifier, $id, $on) {
 
 	$data_PUT = array(
 		"on" => $on
+	);
+
+	$curl = curl_init();
+	curl_setopt_array($curl, array(
+		CURLOPT_URL => $url,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_CUSTOMREQUEST => "PUT",
+        CURLOPT_POSTFIELDS => json_encode($data_PUT),
+        CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $access_token, 'Content-Type: application/json')
+	));
+
+	$response = curl_exec($curl);
+
+	return $response;
+}
+
+function room_change_color($access_token, $whitelist_identifier, $id, $xy) {
+	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
+
+	$data_PUT = array(
+		"xy" => array(floatval($explode[0]), floatval($explode[1]))
 	);
 
 	$curl = curl_init();
