@@ -1,4 +1,5 @@
 // Modified from https://github.com/usolved/cie-rgb-converter Copyright (c) 2017 www.usolved.net
+// Original code converts CIE-RGB, this code converts CIE-HEX
 
 function cie_to_hex(x, y, brightness=254) {
 	var z = 1.0 - x - y;
