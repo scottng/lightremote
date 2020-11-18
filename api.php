@@ -12,18 +12,21 @@ else $whitelist_identifier = whitelist($access_token);
 
 // Check for command
 if(isset($_POST["function"])) {
-	if($_POST["function"] == "room_toggle") {
+	if($_POST["function"] == "toggle") {
 		$id = $_POST["id"];
 		$on = $_POST["on"];
-		room_toggle($access_token, $whitelist_identifier, $id, $on);
-	} else if($_POST["function"] == "room_change_color") {
+		toggle($access_token, $whitelist_identifier, $id, $on);
+	} else if($_POST["function"] == "change_color") {
 		$id = $_POST["id"];
 		$xy = $_POST["xy"];
-		room_change_color($access_token, $whitelist_identifier, $id, $xy);
+		change_color($access_token, $whitelist_identifier, $id, $xy);
+	} else if($_POST["function"] == "set_brightness") {
+		$id = $_POST["id"];
+		$brightness = $_POST["brightness"];
+		set_brightness($access_token, $whitelist_identifier, $id, $brightness);
 	}
 }
 
-// echo get_room_card_info(get_all_rooms($access_token, $whitelist_identifier));
 echo get_all_rooms($access_token, $whitelist_identifier);
 
 // Get the user's access_token from database
@@ -184,7 +187,7 @@ function get_all_rooms($access_token, $whitelist_identifier) {
 	return json_encode($rooms);
 }
 
-function room_toggle($access_token, $whitelist_identifier, $id, $on) {
+function toggle($access_token, $whitelist_identifier, $id, $on) {
 	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
 
 	if($on == "true") $on = true;
@@ -208,7 +211,7 @@ function room_toggle($access_token, $whitelist_identifier, $id, $on) {
 	return $response;
 }
 
-function room_change_color($access_token, $whitelist_identifier, $id, $xy) {
+function change_color($access_token, $whitelist_identifier, $id, $xy) {
 	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
 
 	$explode = explode(",", $xy);
@@ -230,5 +233,30 @@ function room_change_color($access_token, $whitelist_identifier, $id, $xy) {
 
 	return $response;
 }
+
+function set_brightness($access_token, $whitelist_identifier, $id, $brightness) {
+	$url =  "https://api.meethue.com/bridge/" . $whitelist_identifier . "/groups/" . $id . "/action";
+
+	echo "set room brightness";
+
+	$data_PUT = array(
+		"bri" => intval($brightness)
+	);
+
+	$curl = curl_init();
+	curl_setopt_array($curl, array(
+		CURLOPT_URL => $url,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_CUSTOMREQUEST => "PUT",
+        CURLOPT_POSTFIELDS => json_encode($data_PUT),
+        CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $access_token, 'Content-Type: application/json')
+	));
+
+	$response = curl_exec($curl);
+
+	return $response;
+}
+
+
 
  ?>

@@ -1,23 +1,21 @@
-function ajaxGet(endpointUrl, returnFunction){
-	console.log("ajaxGet()");
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', endpointUrl, true);
-	xhr.onreadystatechange = function(){
-		if (xhr.readyState == XMLHttpRequest.DONE) {
-			if (xhr.status == 200) {
-				// When ajax call is complete, call this function, pass a string with the response
-				returnFunction( xhr.responseText );
-			} else {
-				alert('AJAX Error.');
-				console.log(xhr.status);
-			}
-		}
-	}
-	xhr.send();
-};
+// function ajaxGet(endpointUrl, returnFunction){
+// 	var xhr = new XMLHttpRequest();
+// 	xhr.open('GET', endpointUrl, true);
+// 	xhr.onreadystatechange = function(){
+// 		if (xhr.readyState == XMLHttpRequest.DONE) {
+// 			if (xhr.status == 200) {
+// 				// When ajax call is complete, call this function, pass a string with the response
+// 				returnFunction( xhr.responseText );
+// 			} else {
+// 				alert('AJAX Error.');
+// 				console.log(xhr.status);
+// 			}
+// 		}
+// 	}
+// 	xhr.send();
+// };
 
 function ajaxPost(endpointUrl, postData, returnFunction){
-	console.log("ajaxPost()");
 	var xhr = new XMLHttpRequest();
 	xhr.open('POST', endpointUrl, true);
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -34,11 +32,169 @@ function ajaxPost(endpointUrl, postData, returnFunction){
 	xhr.send(postData);
 };
 
-var btn_get_rooms = document.querySelector("#btn-get-rooms");
+$.ajax({
+	type: "GET",
+	url: "api.php",
+	success: function(data) {
+		get_rooms_success(data);
+	}
+});
 
-btn_get_rooms.addEventListener("click", ajaxGet("api.php", function(results){
+function offButtonClickListener(){
+	// Update listener
+	this.removeEventListener("click", offButtonClickListener);
+	this.addEventListener("click", onButtonClickListener);
 
-	console.log(results);
+	// Update toggle button
+	this.classList.remove("btn-dark");
+	this.classList.add("btn-light");
+	this.innerHTML = "ON";
+
+	// Change message
+	message = this.parentNode.querySelector(".message");
+	message.innerHTML = "All lights are on.";
+
+	// Change background color to picker color 
+	card = this.parentNode.parentNode;
+	colorPicker = this.parentNode.querySelector(".colorPicker");
+	card.style.backgroundColor = colorPicker.value;
+
+	// Make text dark for light background
+	cardBody = this.parentNode;
+	cardBody.classList.remove("text-white");
+
+	// Put brightness slider to 100
+	brightnessSlider = this.parentNode.parentNode.querySelector(".custom-range");
+	brightnessSlider.value = 100;
+
+	// AJAX call
+	let id = this.parentNode.parentNode.dataset.id;
+	let postData = `function=toggle&id=${id}&on=true`;
+	$.ajax({
+		type: "POST",
+		url: "api.php",
+		data: postData,
+		success: function(data) {
+			console.log(data);	
+		}
+	});
+}
+
+function onButtonClickListener() {
+	// Update listener
+	this.removeEventListener("click", onButtonClickListener);
+	this.addEventListener("click", offButtonClickListener);
+
+	// Update toggle button
+	this.classList.remove("btn-light");
+	this.classList.add("btn-dark");
+	this.innerHTML = "OFF";
+
+	// Change message
+	message = this.parentNode.querySelector(".message");
+	message.innerHTML = "All lights are off.";
+
+	// Set background to dark
+	card = this.parentNode.parentNode;
+	card.style.backgroundColor = "#222222";
+	
+	// Make text white for dark background
+	cardBody = this.parentNode;
+	cardBody.classList.add("text-white");
+
+	// Put brightness slider to 0
+	brightnessSlider = this.parentNode.parentNode.querySelector(".custom-range");
+	brightnessSlider.value = 0;
+
+	// AJAX call
+	let id = this.parentNode.parentNode.dataset.id;
+	let postData = `function=toggle&id=${id}&on=false`;
+	$.ajax({
+		type: "POST",
+		url: "api.php",
+		data: postData,
+		success: function(data) {
+			console.log(data);	
+		}
+	});
+
+}
+
+function colorPickerListener() {
+	// Front end changes
+	card = this.parentNode.parentNode;
+	card.style.backgroundColor = event.target.value;
+
+	// AJAX call
+	let hex = event.target.value;
+	hex = hex.substring(1);
+	let xy = hex_to_cie(hex);
+	let id = this.parentNode.parentNode.dataset.id;
+	let postData = `function=change_color&id=${id}&xy=${xy}`;
+	// ajaxPost("api.php", postData, function(results) {
+	// 	// console.log(results);
+	// });
+	$.ajax({
+		type: "POST",
+		url: "api.php",
+		data: postData,
+		success: function(data) {
+			console.log(data);	
+		}
+	});
+}
+
+function sliderChangeListener() {
+	// AJAX call
+
+	// Get slider value (brightness)
+	brightness = this.value;
+
+	let id = this.parentNode.parentNode.parentNode.dataset.id;
+	let postData = `function=set_brightness&id=${id}&brightness=${brightness}`;
+	// ajaxPost("api.php", postData, function(results) {
+	// 	console.log(results);
+	// })
+
+	$.ajax({
+		type: "POST",
+		url: "api.php",
+		data: postData,
+		success: function(data) {
+			console.log(data);	
+		}
+	});
+}
+
+function initCardJS() {
+	// Set color picker listeners
+	colorPickers = document.querySelectorAll(".colorPicker");
+	colorPickers.forEach(function(colorPicker){
+		colorPicker.addEventListener("change", colorPickerListener);
+	});
+
+	// Set on/off button listeners
+	onButtons = document.querySelectorAll(".btn-light");
+	onButtons.forEach(function(btn){
+		btn.addEventListener("click", onButtonClickListener);
+	});
+	offButtons = document.querySelectorAll(".btn-dark");
+	offButtons.forEach(function(btn){
+		btn.addEventListener("click", offButtonClickListener);
+	});
+
+	// Set brightness slider listeners
+	sliders = document.querySelectorAll(".custom-range");
+	sliders.forEach(function(slider){
+		console.log("set slider listener");
+		slider.addEventListener("change", sliderChangeListener);
+	});
+}
+
+// btn_get_rooms.addEventListener("click", ajaxGet("api.php", function(results){
+function get_rooms_success(results) {
+
+	// console.log(results);
 
 	rooms = JSON.parse(results);
 
@@ -51,7 +207,7 @@ btn_get_rooms.addEventListener("click", ajaxGet("api.php", function(results){
 	// console.log("rooms[0].lights.length");
 	// console.log(rooms[0].lights.length);
 
-	console.log(rooms);
+	// console.log(rooms);
 
 
 	newInnerHTML = "";
@@ -74,15 +230,12 @@ btn_get_rooms.addEventListener("click", ajaxGet("api.php", function(results){
 		let background_color = 0;
 		let text_white = "";
 		let brightness = 0;
-
 		let hex = cie_to_hex(xy[0], xy[1]);
-		console.log("HEX: ");
-		console.log(hex);
 
 		if(state_any_on == true) {
 			button = `<a href="#" class="btn btn-light float-right">ON</a>`;
 			background_color = cie_to_hex(xy[0], xy[1]);
-			brightness = bri * (100/254);
+			brightness = bri;
 
 			if(state_all_on) message = "All lights are on.";
 			else message = "Some lights are on.";
@@ -105,7 +258,7 @@ btn_get_rooms.addEventListener("click", ajaxGet("api.php", function(results){
 					</div>
 					<div class="card-footer">
 						<div class="justify-content-center">
-							<input type="range" class="custom-range" id="brightness" min="0" max="100" value="${brightness}">
+							<input type="range" class="custom-range" id="brightness" min="0" max="254" value="${brightness}">
 						</div>
 					</div>
 				</div>
@@ -119,4 +272,5 @@ btn_get_rooms.addEventListener("click", ajaxGet("api.php", function(results){
 	cardContainer.innerHTML += newInnerHTML;
 
 	initCardJS();
-}));
+// }));
+}

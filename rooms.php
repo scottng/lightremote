@@ -23,6 +23,7 @@ $authorize_url = "https://api.meethue.com/oauth2/auth?" . http_build_query($auth
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -58,7 +59,7 @@ $authorize_url = "https://api.meethue.com/oauth2/auth?" . http_build_query($auth
 		<!-- Backend setup -->
 		<div class="row m-2 p2">
 			<a class="btn btn-primary" href="<?php echo $authorize_url; ?>" role="button">Connect with Hue</a>
-			<a class="btn btn-primary" id="btn-get-rooms">Get rooms</a>
+			<!-- <a class="btn btn-primary" id="btn-get-rooms">Get rooms</a> -->
 		</div>
 		<!-- Backend setup -->
 
@@ -157,7 +158,6 @@ $authorize_url = "https://api.meethue.com/oauth2/auth?" . http_build_query($auth
 
 	<script src="cie_hex_converter.js"></script>
 	<script src="rooms-ajax.js"></script>
-	<script src="card.js"></script>
 
 </body>
 
