@@ -59,7 +59,6 @@ $authorize_url = "https://api.meethue.com/oauth2/auth?" . http_build_query($auth
 		<!-- Backend setup -->
 		<div class="row m-2 p2">
 			<a class="btn btn-primary" href="<?php echo $authorize_url; ?>" role="button">Connect with Hue</a>
-			<!-- <a class="btn btn-primary" id="btn-get-rooms">Get rooms</a> -->
 		</div>
 		<!-- Backend setup -->
 

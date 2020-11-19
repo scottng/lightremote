@@ -14,9 +14,7 @@ $data = array(
     "grant_type" => "authorization_code",
     "code" => $code
 );
-
 $url = "https://api.meethue.com/oauth2/token";
-
 $curl = curl_init();
 curl_setopt_array($curl, array(
     CURLOPT_URL => $url,
@@ -31,6 +29,7 @@ curl_setopt_array($curl, array(
 $response = curl_exec($curl);
 $response = json_decode($response, true);
 
+// Set session variables
 $_SESSION['access_token'] = $response['access_token'];
 $_SESSION['access_token_expires_in'] = $response['access_token_expires_in'];
 $_SESSION['refresh_token'] = $response['refresh_token'];
@@ -43,7 +42,6 @@ if($mysqli->connect_errno) {
     echo $mysqli->connect_errno;
     exit();
 }
-
 $sql = "UPDATE users SET access_token='" . $response['access_token'] . "', 
         access_token_expires_in=" . $response['access_token_expires_in'] . ",
         refresh_token='" . $response['refresh_token'] . "',
