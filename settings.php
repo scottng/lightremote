@@ -61,7 +61,7 @@
 				<form action="signout.php" method="POST">
 					<button type="submit" class="btn btn-primary mb-2">Sign out</button>
 				</form>
-				<form action="delete_account.php" method="POST">
+				<form id="form-delete-account" action="delete_account_confirmation.php" method="POST">
 					<button type="submit" class="btn btn-danger mb-2">Delete my account</button>
 				</form>
 			</div>
@@ -89,7 +89,9 @@
 			}
 		}
 
-		document.querySelector('#')
+		document.querySelector('#form-delete-account').onsubmit = function(event) {
+			alert("Are you sure you want to delete your account?");
+		}
 	</script>
 
 </body>
