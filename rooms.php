@@ -48,8 +48,7 @@ $authorize_url = "https://api.meethue.com/oauth2/auth?" . http_build_query($auth
 		</div>
 	</nav>
 
-	<div class="container">
-
+	<div class="container" id="card-container">
 		<div class="row m-2 p-2">
 			<div class="text-white">
 				<h1>Rooms</h1>
@@ -58,13 +57,9 @@ $authorize_url = "https://api.meethue.com/oauth2/auth?" . http_build_query($auth
 
 		<!-- Backend setup -->
 		<div class="row m-2 p2">
-			<a class="btn btn-primary" href="<?php echo $authorize_url; ?>" role="button">Connect with Hue</a>
+			<a class="btn btn-dark" href="<?php echo $authorize_url; ?>" role="button">Connect with Hue</a>
 		</div>
 		<!-- Backend setup -->
-
-	</div>
-
-	<div class="container" id="card-container">
 	</div>
 
 	<script src="cie_hex_converter.js"></script>

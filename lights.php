@@ -27,7 +27,7 @@
 
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
+				<li class="nav-item">
 					<a class="nav-link" href="rooms.php">Rooms</a>
 				</li>
 				<li class="nav-item active">
@@ -40,8 +40,6 @@
 		</div>
 	</nav>
 
-	
-
 	<div class="container" id="card-container">
 
 		<div class="row m-2 p-2">
@@ -49,8 +47,6 @@
 				<a href="rooms.php" class="btn btn-secondary">Back</a>
 				<h1><?php echo $room_name ?></h1>
 			</div>
-		</div>
-
 		</div>
 
 	</div>
