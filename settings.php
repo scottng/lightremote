@@ -23,6 +23,9 @@
 				<li class="nav-item">
 					<a class="nav-link" href="rooms.php">Rooms</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="messages.php">Messages</a>
+				</li>
 				<li class="nav-item active">
 					<a class="nav-link" href="settings.php">Settings<span class="sr-only">(current)</span></a>
 				</li>

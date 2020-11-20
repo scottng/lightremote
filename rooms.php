@@ -42,6 +42,9 @@ $authorize_url = "https://api.meethue.com/oauth2/auth?" . http_build_query($auth
 					<a class="nav-link" href="rooms.php">Rooms<span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item">
+					<a class="nav-link" href="messages.php">Messages</a>
+				</li>
+				<li class="nav-item">
 					<a class="nav-link" href="settings.php">Settings</a>
 				</li>
 			</ul>

@@ -41,7 +41,7 @@ function offButtonClickListener(){
 		url: "api.php",
 		data: postData,
 		success: function(data) {
-			console.log(data);	
+			// console.log(data);	
 		}
 	});
 }
@@ -78,7 +78,7 @@ function onButtonClickListener() {
 		url: "api.php",
 		data: postData,
 		success: function(data) {
-			console.log(data);	
+			// console.log(data);	
 		}
 	});
 }
@@ -102,7 +102,7 @@ function colorPickerListener() {
 		url: "api.php",
 		data: postData,
 		success: function(data) {
-			console.log(data);	
+			// console.log(data);	
 		}
 	});
 }
@@ -122,7 +122,7 @@ function sliderChangeListener() {
 		url: "api.php",
 		data: postData,
 		success: function(data) {
-			console.log(data);	
+			// console.log(data);	
 		}
 	});
 }
@@ -147,7 +147,7 @@ function initCardJS() {
 	// Set brightness slider listeners
 	sliders = document.querySelectorAll(".custom-range");
 	sliders.forEach(function(slider){
-		console.log("set slider listener");
+		// console.log("set slider listener");
 		slider.addEventListener("change", sliderChangeListener);
 	});
 }
@@ -157,7 +157,7 @@ function get_lights_success(results) {
 	// console.log(results);
 
 	lights = JSON.parse(results);
-	console.log(lights.length);
+	// console.log(lights.length);
 
 	newInnerHTML = "";
 
