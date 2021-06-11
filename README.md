@@ -1,7 +1,7 @@
 # lightremote
 Control Philips Hue lights from your web browser.
 
-![Screenshot of light bulb controls](https://github.com/scottng/lightremote/blob/master/images/color.png?raw=true)
+<img src="https://github.com/scottng/lightremote/blob/master/images/color.png?raw=true" width="500" alt="Screenshot of light controls">
 Change the brightness, color, and power of lights.
 
 ## About
