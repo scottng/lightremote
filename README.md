@@ -1,6 +1,9 @@
 # lightremote
 Control Philips Hue lights from your web browser.
 
+![Screenshot of light bulb controls](https://github.com/scottng/lightremote/blob/master/images/color.png?raw=true)
+Change the brightness, color, and power of lights.
+
 ## About
 Philips Hue is a range of smart light devices used in many homes. Philips provides a mobile application for
 controlling their lights; however, there is no official web interface for controlling Hue lights and only a few third-party ones.
